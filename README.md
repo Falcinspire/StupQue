@@ -9,12 +9,12 @@ A simple web app for asking anonymous, stupid questions.
 
 # Infrastructure Details
 
-This app relies on Firebase for backend storage and live updates. The configuration file is in 
+This app relies on Firebase for backend storage and live updates. The credentials file is 
 `src/firebase/firebase-config.ts`.
 
 Because the author wanted to stay in the free tier at all costs (my credit card, hissss), some 
 security sacrifices were made. With some advanced JS knowledge, a malicious user could edit the 
-database inapropriately. The choice to publicize the security rules for the database was made because
+database inappropriately. The choice to publicize the security rules for the database was made because
 it was preferred that vulnerabilities be discovered and corrected as opposed to hidden and exploited in
 secret.
 
