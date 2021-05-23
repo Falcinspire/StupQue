@@ -1,0 +1,102 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Utility functions
+    //=================================================
+
+    // Did the value change by exactly 1?
+    function isIncrement(a, b) {
+      return math.abs(a - b) == 1;
+    }
+
+    // Does the map contain only the fields provided?
+    function hasExactly(map, fields) {
+      let keys = map.keys();
+      return keys.hasOnly(fields) && keys.hasAll(fields);
+    }
+
+    // Domain functions
+    //=================================================
+
+    // Validate adding a new group
+    function validateGroupAdd(newData) {
+      return 
+        hasExactly(newData, ["createdDate", "name"]) &&
+        (newData.name.size() > 0 && newData.name.size() <= 16);
+    }
+
+    // Validate adding a question
+    function validateQuestionAdd(newData) {
+      return 
+        hasExactly(newData, ["datetime", "upvotes", "flags", "text", "responses"]) &&
+        (newData.text.size() > 0 && newData.text.size() <= 512) &&
+        newData.upvotes == 0 &&
+        newData.flags == 0 &&
+        newData.responses.size() == 0;
+    }
+
+    // Validate modifying a question
+    function validateQuestionUpdate(newData, oldData) {
+      let keys = newData.diff(oldData).affectedKeys();
+      return 
+        !(keys.hasAll(['upvotes']) && !isIncrement(newData.upvotes, oldData.upvotes)) &&
+        !(keys.hasAll(['flags']) && !isIncrement(newData.flags, oldData.flags)) &&
+        !(keys.hasAll(['responses']) && !validateResponses(newData.responses, oldData.responses)) &&
+        !keys.hasAll(['text']);
+    }
+
+    // Validate change in responses array. This can be an addition or 
+    // a modification.
+    function validateResponses(newResponses, oldResponses) {
+      let diffList = newResponses.removeAll(oldResponses);
+      let oldDiffList = oldResponses.removeAll(newResponses);
+      return isValidAdd(diffList, oldDiffList) || isValidEdit(diffList, oldDiffList);
+    }
+
+    // Did an addition occur in the responses array, and if so, is it valid?
+    function isValidAdd(diffList, oldDiffList) {
+      return
+        diffList.size() == 1 &&
+        oldDiffList.size() == 0 &&
+        validateResponseAdd(diffList[0]);
+    }
+
+    // Did an edit occur in the responses array, and if so, is it valid?
+    function isValidEdit(diffList, oldDiffList) {
+      return 
+        diffList.size() == 1 && 
+        oldDiffList.size() == 1 && 
+        validateResponseEdit(diffList[0], oldDiffList[0])
+    }
+
+    // Validate adding a response to an array
+    function validateResponseAdd(newResponse) {
+      return 
+        hasExactly(newResponse, ["datetime", "upvotes", "flags", "text", "id"]) && 
+        newResponse.upvotes == 0 &&
+        newResponse.flags == 0;
+    }
+
+    // Validate a change from one response data to another
+    function validateResponseEdit(newResponse, oldResponse) {
+      let keys = newResponse.diff(oldResponse).affectedKeys();
+      return 
+        hasExactly(newResponse, ["datetime", "upvotes", "flags", "text", "id"]) && 
+        !(keys.hasAll(['upvotes']) && !isIncrement(newResponse.upvotes, oldResponse.upvotes)) &&
+        !(keys.hasAll(['flags']) && !isIncrement(newResponse.flags, oldResponse.flags)) &&
+        !keys.hasAll(['text']) &&
+        !keys.hasAll(['id']);
+    }
+
+    match /groups/{document} {
+      allow create: if validateGroupAdd(request.resource.data);
+      allow read: if true;
+    }
+    match /groups/{group}/questions/{document=**} {
+      allow create: if validateQuestionAdd(request.resource.data);
+      allow update: if validateQuestionUpdate(request.resource.data, resource.data);
+      allow read: if true;
+    }
+  }
+}

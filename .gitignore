@@ -1,0 +1,6 @@
+.firebase/
+.vscode/
+build/
+node_modules/
+src/firebase/firebase-config.ts
+
