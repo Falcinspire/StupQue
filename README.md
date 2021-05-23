@@ -1,4 +1,24 @@
-# Getting Started with Create React App
+# StupQue
+
+*Stupid Questions*
+
+A simple web app for asking anonymous, stupid questions.
+
+![Desktop Screenshot of App](/desktop_screenshot.jpg)
+![Mobile Screenshot of App](/mobile_screenshot.jpg)
+
+# Infrastructure Details
+
+This app relies on Firebase for backend storage and live updates. The configuration file is in 
+`src/firebase/firebase-config.ts`.
+
+Because the author wanted to stay in the free tier at all costs (my credit card, hissss), some 
+security sacrifices were made. With some advanced JS knowledge, a malicious user could edit the 
+database inapropriately. The choice to publicize the security rules for the database was made because
+it was preferred that vulnerabilities be discovered and corrected as opposed to hidden and exploited in
+secret.
+
+# Usage Details
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
