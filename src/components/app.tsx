@@ -38,9 +38,6 @@ function App() {
           <Route path="/about">
             <AboutPage />
           </Route>
-          <Route path="/primer">
-            <PrimerPage />
-          </Route>
           <Route path="/">
             <HomePage></HomePage>
           </Route>
