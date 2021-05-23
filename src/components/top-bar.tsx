@@ -71,7 +71,6 @@ function TopBar(props: { title: string, groupLink?: string }) {
             )
           }
           <MenuItem component={Link} to={'/'} onClick={closeMenu}>Home</MenuItem>
-          <MenuItem component={Link} to={'/primer'} onClick={closeMenu}>Primer</MenuItem>
           <MenuItem component={Link} to={'/about'} onClick={closeMenu}>About</MenuItem>
         </Menu>
       </Toolbar>
