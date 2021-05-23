@@ -4,6 +4,8 @@
 
 A simple web app for asking anonymous, stupid questions.
 
+(Hopefully) View the live site here: https://stupq.falcinspire.com/
+
 ![Desktop Screenshot of App](/desktop_screenshot.jpg)
 ![Mobile Screenshot of App](/mobile_screenshot.jpg)
 
