@@ -8,7 +8,6 @@ import AboutPage from './about-page';
 import AskPage from './ask-page';
 import GroupPage from './group-page';
 import HomePage from './home-page';
-import PrimerPage from './primer-page';
 import QuestionPage from './question-page';
 
 const useStyles = makeStyles({
